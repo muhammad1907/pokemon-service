@@ -1,8 +1,9 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
+const { Pokemon } = require('../models');
 
-router.get('/:id', async (req, res) => {
+router.post('/:id', async (req, res) => {
     const id = req.params.id;
     try {
         const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
@@ -10,13 +11,23 @@ router.get('/:id', async (req, res) => {
         const randomNumber = Math.floor(Math.random() * 100) + 1;
 
         if(randomNumber % 2 === 0) {
+
+            const data = {
+                user_id: req.body.user_id,
+                pokemon_id: id,
+                pokemon_name: pokemon.name,
+                changes: 1
+            };
+            
+            const createdUser = await Pokemon.create(data);
+
             return res.json({
-                is_success : 'success',
+                is_success : 'success catch a pokemon',
                 data: pokemon
             });
         } else {
             return res.json({
-                is_success : 'failed',
+                is_success : 'failed catch a pokmeon',
                 data: pokemon
             });
         }
